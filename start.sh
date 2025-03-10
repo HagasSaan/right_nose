@@ -1,1 +1,0 @@
-sudo ./deps/firecracker/firecracker --config-file vmconfig.json --no-api

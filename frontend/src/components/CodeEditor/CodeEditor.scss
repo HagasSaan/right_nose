@@ -1,0 +1,21 @@
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100vh - 120px);
+
+    .editor-tabs {
+        display: flex;
+        flex: 1;
+        gap: 10px;
+        padding: 10px;
+        overflow: hidden;
+
+        > * {
+            flex: 1;
+            border-radius: 5px;
+            background-color: #fff;
+            padding: 10px;
+        }
+    }
+}

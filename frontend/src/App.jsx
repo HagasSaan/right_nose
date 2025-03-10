@@ -1,23 +1,17 @@
-import { useEffect } from "react";
 import "./App.scss";
 
-import CodeEditor from "./components/CodeEditor/CodeEditor";
-import { BASE_URL } from "./Constants";
-import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage/HomePage";
+import RoomsPage from "./pages/RoomsPage/RoomsPage";
+import RoomPage from "./pages/RoomPage/RoomPage";
 
 export default function App() {
-  const [rooms, setRooms] = useState([]);
-
-  useEffect(() => {
-    async function getRoomsFromAPI() {
-      let response = await fetch(`http://${BASE_URL}/api/rooms`);
-
-      let json = await response.json();
-      setRooms(json);
-    }
-
-    getRoomsFromAPI();
-  }, []);
-
-  return <CodeEditor roomId={1} />;
+  return (
+    <Routes>
+      <Route path="" end element={<HomePage />}>
+        <Route path="rooms" element={<RoomsPage />}></Route>
+        <Route path="rooms/:roomId" element={<RoomPage />} />
+      </Route>
+    </Routes>
+  );
 }

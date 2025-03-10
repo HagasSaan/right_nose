@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { LanguageContext } from "../../Contexts";
+import "./LanguageSelector.scss";
 
-export default function LanguageSelector({ children }) {
-  const [selectedLanguage, setSelectedLanguage] = useState("python");
+import { useDispatch, useSelector } from "react-redux";
+import { selectLanguage } from "../../LanguageSelectorSlice";
+
+export default function LanguageSelector() {
+  const selectedLanguage = useSelector((state) => state.languageSelector.value);
+  const dispatch = useDispatch();
 
   return (
-    <LanguageContext.Provider value={selectedLanguage}>
-      <div className="language-selector">
-        <select
-          id="selected-language"
-          value={selectedLanguage}
-          onChange={(e) => setSelectedLanguage(e.target.value)}
-        >
-          <option value="python">Python</option>;
-          <option value="javascript">JavaScript</option>;
-        </select>
-      </div>
-      {children}
-    </LanguageContext.Provider>
+    <div className="language-selector">
+      <select
+        id="selected-language"
+        value={selectedLanguage}
+        onChange={(e) => dispatch(selectLanguage(e.target.value))}
+      >
+        <option value="python">Python</option>;
+        <option value="javascript">JavaScript (Node 22)</option>;
+      </select>
+    </div>
   );
 }

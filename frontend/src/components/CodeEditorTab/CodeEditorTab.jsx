@@ -1,14 +1,14 @@
-import { useState, useEffect, useContext, useCallback } from "react";
-
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useSelector } from "react-redux";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
+import { javascript } from "@codemirror/lang-javascript";
 
 import "./CodeEditorTab.scss";
 import { BASE_URL } from "../../Constants";
-import { LanguageContext } from "../../Contexts";
 
 export default function CodeEditorTab({ roomId }) {
-  const selectedLanguage = useContext(LanguageContext);
+  const selectedLanguage = useSelector((state) => state.languageSelector.value);
   const [ws, setWs] = useState(null);
   const [text, setText] = useState("");
 
@@ -35,16 +35,19 @@ export default function CodeEditorTab({ roomId }) {
     };
   }, [roomId]);
 
-  function getExtensions(selectedLanguage) {
+  const extensions = useMemo(() => {
     switch (selectedLanguage) {
       case "python":
         console.log("got extension for Python");
         return [python()];
+      case "javascript":
+        console.log("got extension for JavaScript");
+        return [javascript()];
       default:
         console.log("unknown language:", selectedLanguage);
         return [];
     }
-  }
+  }, [selectedLanguage]);
 
   const handleTextChange = useCallback(
     (value) => {
@@ -58,9 +61,12 @@ export default function CodeEditorTab({ roomId }) {
 
   const runCode = async () => {
     console.log("running code");
-    await fetch(`http://${BASE_URL}/`, {
-      method: "POST",
-    });
+    await fetch(
+      `http://${BASE_URL}/api/rooms/${roomId}?language=${selectedLanguage}`,
+      {
+        method: "POST",
+      },
+    );
   };
 
   return (
@@ -69,7 +75,7 @@ export default function CodeEditorTab({ roomId }) {
         className="code-input"
         height="100%"
         value={text}
-        extensions={getExtensions(selectedLanguage)} // TODO: it runs for each keyboard input. Needs to be fixed
+        extensions={extensions}
         onChange={handleTextChange}
       />
       <button onClick={runCode}>Run Code</button>
