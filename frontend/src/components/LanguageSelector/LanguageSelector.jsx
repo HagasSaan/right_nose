@@ -14,8 +14,8 @@ export default function LanguageSelector() {
         value={selectedLanguage}
         onChange={(e) => dispatch(selectLanguage(e.target.value))}
       >
-        <option value="python">Python</option>;
-        <option value="javascript">JavaScript (Node 22)</option>;
+        <option value="python3">Python 3</option>;
+        <option value="javascript22">JavaScript (Node 22)</option>;
       </select>
     </div>
   );

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const languageSelectorSlice = createSlice({
   name: "languageSelector",
   initialState: {
-    value: "python",
+    value: "python3",
   },
   reducers: {
     selectLanguage: (state, action) => {

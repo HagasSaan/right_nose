@@ -37,10 +37,10 @@ export default function CodeEditorTab({ roomId }) {
 
   const extensions = useMemo(() => {
     switch (selectedLanguage) {
-      case "python":
+      case "python3":
         console.log("got extension for Python");
         return [python()];
-      case "javascript":
+      case "javascript22":
         console.log("got extension for JavaScript");
         return [javascript()];
       default:

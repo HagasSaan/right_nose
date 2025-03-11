@@ -8,13 +8,13 @@ class DockerExecutor:
     language: str
 
     LANGUAGE_TO_SETTINGS_MAP = {
-        'python': {
+        'python3': {
             'image': 'python:3-slim',
-            'command': 'python'
+            'command_template': 'python /code/{filename} || true'
         },
-        'javascript': {
+        'javascript22': {
             'image': 'node:22-alpine',
-            'command': 'node',
+            'command_template': 'node /code/{filename} || true',
         }
     }
 
@@ -30,7 +30,7 @@ class DockerExecutor:
             filename = tmp.name.split('/')[-1]
 
             image = settings['image']
-            cmd = f'{settings["command"]} /code/{filename} || true'
+            cmd = settings['command_template'].format(filename=filename)
 
             container = client.containers.run(
                 image,
