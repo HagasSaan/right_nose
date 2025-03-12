@@ -3,12 +3,14 @@ from starlette.websockets import WebSocket
 
 class ConnectionManager:
     def __init__(self):
-        self.last_message = ''
+        self.last_message = None
         self.active_connections: list[WebSocket] = []
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
-        await websocket.send_text(self.last_message)
+        if self.last_message:
+            await websocket.send_text(self.last_message)
+
         self.active_connections.append(websocket)
 
     def disconnect(self, websocket: WebSocket):

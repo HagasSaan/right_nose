@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import json
 from collections import defaultdict
 
 from fastapi import FastAPI, WebSocket, Request, WebSocketDisconnect
@@ -33,10 +34,15 @@ async def get_rooms(request: Request) -> JSONResponse:
     return mock_rooms
 
 @app.post("/api/rooms/{room_id}", response_class=JSONResponse)
-async def run_code(room_id: int, language: str, request: Request):
+async def run_code(room_id: int, request: Request):
     try:
-        executor = DockerExecutor(language)
-        result = await executor.execute(input_connection_managers[room_id].last_message)
+        last_message = input_connection_managers[room_id].last_message
+        if not last_message:
+            return {'result': 'error', 'detail': 'No message yet'}
+
+        message = json.loads(last_message)
+        executor = DockerExecutor(message['language'])
+        result = await executor.execute(message['code'])
         await output_connection_managers[room_id].broadcast(result)
         return {'result': 'success'}
     except Exception as e:
