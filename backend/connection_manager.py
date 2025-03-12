@@ -1,5 +1,5 @@
 from starlette.websockets import WebSocket
-
+from collections import defaultdict
 
 class ConnectionManager:
     def __init__(self):
@@ -27,3 +27,6 @@ class ConnectionManager:
                 await connection.send_text(message)
             except Exception as e:
                 print(e)
+
+input_connection_managers = defaultdict(ConnectionManager)
+output_connection_managers = defaultdict(ConnectionManager)
