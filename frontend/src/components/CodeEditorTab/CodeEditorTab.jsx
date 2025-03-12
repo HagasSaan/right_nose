@@ -1,14 +1,16 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { javascript } from "@codemirror/lang-javascript";
 
 import "./CodeEditorTab.scss";
 import { BASE_URL } from "../../Constants";
+import { selectLanguage } from "../../LanguageSelectorSlice";
 
 export default function CodeEditorTab({ roomId }) {
   const selectedLanguage = useSelector((state) => state.languageSelector.value);
+  const dispatch = useDispatch();
   const [ws, setWs] = useState(null);
   const [code, setCode] = useState("");
 
@@ -26,16 +28,26 @@ export default function CodeEditorTab({ roomId }) {
     };
 
     websocket.onmessage = (event) => {
-      setCode(event.data);
+      let message = JSON.parse(event.data);
+      setCode(message.code);
+      dispatch(selectLanguage(message.language));
     };
 
     setWs(websocket);
     return () => {
       websocket.close();
     };
-  }, [roomId]);
+  }, [roomId, dispatch]);
 
   const extensions = useMemo(() => {
+    let message = {
+      code: code,
+      language: selectedLanguage,
+    };
+    if (ws) {
+      ws.send(JSON.stringify(message));
+    }
+
     switch (selectedLanguage) {
       case "python3":
         console.log("got extension for Python");
@@ -52,21 +64,19 @@ export default function CodeEditorTab({ roomId }) {
   const handleTextChange = useCallback(
     (value) => {
       setCode(value);
+      let message = { code: value, language: selectedLanguage };
       if (ws) {
-        ws.send(value);
+        ws.send(JSON.stringify(message));
       }
     },
-    [ws],
+    [ws, selectedLanguage],
   );
 
   const runCode = async () => {
     console.log("running code");
-    await fetch(
-      `http://${BASE_URL}/api/rooms/${roomId}?language=${selectedLanguage}`,
-      {
-        method: "POST",
-      },
-    );
+    await fetch(`http://${BASE_URL}/api/rooms/${roomId}`, {
+      method: "POST",
+    });
   };
 
   return (
