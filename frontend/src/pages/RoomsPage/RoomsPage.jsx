@@ -7,6 +7,14 @@ import { BASE_URL } from "../../Constants";
 export default function RoomsPage() {
   const [rooms, setRooms] = useState([]);
 
+  async function createRoom() {
+    let response = await fetch(`http://${BASE_URL}/api/rooms`, {
+      method: "POST",
+    });
+    let roomJson = await response.json();
+    setRooms([...rooms, roomJson]);
+  }
+
   useEffect(() => {
     async function fetchData() {
       let response = await fetch(`http://${BASE_URL}/api/rooms`);
@@ -25,6 +33,7 @@ export default function RoomsPage() {
             Room {room.name}
           </NavLink>
         ))}
+        <button onClick={createRoom}>Create room</button>
       </nav>
     </>
   );
