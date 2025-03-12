@@ -10,7 +10,7 @@ import { BASE_URL } from "../../Constants";
 export default function CodeEditorTab({ roomId }) {
   const selectedLanguage = useSelector((state) => state.languageSelector.value);
   const [ws, setWs] = useState(null);
-  const [text, setText] = useState("");
+  const [code, setCode] = useState("");
 
   useEffect(() => {
     const websocketUrl = `ws://${BASE_URL}/ws/${roomId}/input`;
@@ -26,7 +26,7 @@ export default function CodeEditorTab({ roomId }) {
     };
 
     websocket.onmessage = (event) => {
-      setText(event.data);
+      setCode(event.data);
     };
 
     setWs(websocket);
@@ -51,7 +51,7 @@ export default function CodeEditorTab({ roomId }) {
 
   const handleTextChange = useCallback(
     (value) => {
-      setText(value);
+      setCode(value);
       if (ws) {
         ws.send(value);
       }
@@ -74,7 +74,7 @@ export default function CodeEditorTab({ roomId }) {
       <CodeMirror
         className="code-input"
         height="100%"
-        value={text}
+        value={code}
         extensions={extensions}
         onChange={handleTextChange}
       />
