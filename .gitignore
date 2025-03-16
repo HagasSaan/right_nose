@@ -2,3 +2,4 @@
 deps
 .idea
 .ropeproject
+node_modules
