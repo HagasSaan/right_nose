@@ -21,7 +21,7 @@ export default function RoomCreatePage() {
     };
 
     await addDoc(roomsCollection, roomData);
-    navigate("");
+    navigate("../rooms");
   }
 
   return (

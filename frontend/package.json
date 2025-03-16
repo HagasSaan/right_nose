@@ -14,11 +14,13 @@
     "@codemirror/lang-python": "^6.1.7",
     "@reduxjs/toolkit": "^2.6.0",
     "@uiw/react-codemirror": "^4.23.9",
+    "firebase": "^11.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.3.0",
-    "sass-embedded": "^1.85.1"
+    "sass-embedded": "^1.85.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
