@@ -1,16 +1,22 @@
 import "./HomePage.scss";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function HomePage() {
+  const credential = useSelector((state) => state.auth.credential);
   const location = useLocation();
-  console.log(location);
+
   return (
     <>
       <nav className="home-nav">
         <NavLink to="">Home Page</NavLink>
-        <NavLink to="rooms" end>
-          Rooms
-        </NavLink>
+        {credential ? (
+          <NavLink to="rooms" end>
+            Rooms
+          </NavLink>
+        ) : (
+          <NavLink to="auth">Log in</NavLink>
+        )}
       </nav>
       {location.pathname === "/" ? (
         <div className="description">

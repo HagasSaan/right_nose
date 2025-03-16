@@ -10,11 +10,11 @@ export default function CodeOutputTab({ roomId }) {
     const websocketUrl = `ws://${BASE_URL}/ws/${roomId}/output`;
     const websocket = new WebSocket(websocketUrl);
     websocket.onopen = () => {
-      console.log("Connected to websocket", websocketUrl);
+      console.debug("Connected to websocket", websocketUrl);
     };
 
     websocket.onclose = () => {
-      console.log("Closed connection with websocket", websocketUrl);
+      console.debug("Closed connection with websocket", websocketUrl);
     };
 
     websocket.onmessage = (event) => {

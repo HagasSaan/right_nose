@@ -6,7 +6,7 @@ import { javascript } from "@codemirror/lang-javascript";
 
 import "./CodeEditorTab.scss";
 import { BASE_URL } from "../../Constants";
-import { selectLanguage } from "../../LanguageSelectorSlice";
+import { selectLanguage } from "../../slices/LanguageSelectorSlice";
 
 export default function CodeEditorTab({ roomId }) {
   const selectedLanguage = useSelector((state) => state.languageSelector.value);
@@ -16,15 +16,15 @@ export default function CodeEditorTab({ roomId }) {
 
   useEffect(() => {
     const websocketUrl = `ws://${BASE_URL}/ws/${roomId}/input`;
-    console.log("Connecting to socket", websocketUrl);
+    console.debug("Connecting to socket", websocketUrl);
 
     const websocket = new WebSocket(websocketUrl);
     websocket.onopen = () => {
-      console.log("Connected to websocket", websocketUrl);
+      console.debug("Connected to websocket", websocketUrl);
     };
 
     websocket.onclose = () => {
-      console.log("Closed connection with websocket", websocketUrl);
+      console.debug("Closed connection with websocket", websocketUrl);
     };
 
     websocket.onmessage = (event) => {
@@ -50,13 +50,13 @@ export default function CodeEditorTab({ roomId }) {
 
     switch (selectedLanguage) {
       case "python3":
-        console.log("got extension for Python");
+        console.debug("got extension for Python");
         return [python()];
       case "javascript22":
-        console.log("got extension for JavaScript");
+        console.debug("got extension for JavaScript");
         return [javascript()];
       default:
-        console.log("unknown language:", selectedLanguage);
+        console.debug("unknown language:", selectedLanguage);
         return [];
     }
   }, [selectedLanguage]);

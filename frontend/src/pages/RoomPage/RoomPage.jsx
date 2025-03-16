@@ -3,6 +3,7 @@ import CodeEditor from "../../components/CodeEditor/CodeEditor";
 
 export default function RoomPage() {
   const { roomId } = useParams();
+
   return (
     <>
       <CodeEditor roomId={roomId} />
