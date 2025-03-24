@@ -4,14 +4,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { db } from "../../Constants";
+import "./RoomCreatePage.scss";
 
 export default function RoomCreatePage() {
   const roomsCollection = collection(db, "rooms");
   const navigate = useNavigate();
   const [roomName, setRoomName] = useState("");
+  const [error, setError] = useState("");
 
   async function createRoom() {
-    if (!roomName) {
+    if (!roomName.trim()) {
+      setError("Room name cannot be empty");
       return;
     }
 
@@ -20,19 +23,31 @@ export default function RoomCreatePage() {
       name: roomName,
     };
 
-    await addDoc(roomsCollection, roomData);
-    navigate("../rooms");
+    try {
+      await addDoc(roomsCollection, roomData);
+      navigate("../rooms");
+    } catch (err) {
+      setError("Something went wrong. Try again.");
+      console.error(err);
+    }
   }
 
   return (
-    <>
-      <label>
+    <div className="room-create-container">
+      <div className="room-create-card">
+        <h1>Create a New Room</h1>
         <input
-          onChange={(e) => setRoomName(e.target.value)}
+          type="text"
+          placeholder="Enter room name"
           value={roomName}
-        ></input>
-      </label>
-      <button onClick={createRoom}>Create Room</button>);
-    </>
+          onChange={(e) => {
+            setRoomName(e.target.value);
+            setError("");
+          }}
+        />
+        {error && <p className="error">{error}</p>}
+        <button onClick={createRoom}>Create Room</button>
+      </div>
+    </div>
   );
 }

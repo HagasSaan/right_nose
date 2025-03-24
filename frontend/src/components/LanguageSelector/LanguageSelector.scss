@@ -1,28 +1,21 @@
 .language-selector {
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-
+    margin: 1rem;
+  
     select {
-        padding: 10px 15px;
-        border: 2px solid #000;
-        border-radius: 5px;
-        background-color: #fff;
-        font-size: 16px;
-        font-weight: bold;
-        color: #000;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        &:focus {
-            outline: none;
-            border-color: #333;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-        }
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: all 0.3s ease;
+  
+      &:focus {
+        outline: none;
+        border-color: var(--accent-color);
+      }
     }
-}
+  }
+  

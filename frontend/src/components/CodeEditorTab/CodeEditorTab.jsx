@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { javascript } from "@codemirror/lang-javascript";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { githubLight } from "@uiw/codemirror-theme-github";
 
 import "./CodeEditorTab.scss";
 import { BASE_URL } from "../../Constants";
@@ -14,49 +16,54 @@ export default function CodeEditorTab({ roomId }) {
   const [ws, setWs] = useState(null);
   const [code, setCode] = useState("");
 
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.getAttribute("data-theme") || "light"
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const newTheme = document.documentElement.getAttribute("data-theme");
+      setTheme(newTheme || "light");
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // WebSocket
   useEffect(() => {
     const websocketUrl = `ws://${BASE_URL}/ws/${roomId}/input`;
-    console.debug("Connecting to socket", websocketUrl);
-
     const websocket = new WebSocket(websocketUrl);
-    websocket.onopen = () => {
-      console.debug("Connected to websocket", websocketUrl);
-    };
 
-    websocket.onclose = () => {
-      console.debug("Closed connection with websocket", websocketUrl);
-    };
-
+    websocket.onopen = () => console.debug("Connected to WebSocket", websocketUrl);
+    websocket.onclose = () => console.debug("Disconnected from WebSocket", websocketUrl);
     websocket.onmessage = (event) => {
-      let message = JSON.parse(event.data);
+      const message = JSON.parse(event.data);
       setCode(message.code);
       dispatch(selectLanguage(message.language));
     };
 
     setWs(websocket);
-    return () => {
-      websocket.close();
-    };
+    return () => websocket.close();
   }, [roomId, dispatch]);
 
-  const extensions = useMemo(() => {
-    let message = {
-      code: code,
-      language: selectedLanguage,
-    };
-    if (ws) {
-      ws.send(JSON.stringify(message));
+  useEffect(() => {
+    if (ws && code !== "") {
+      ws.send(JSON.stringify({ code, language: selectedLanguage }));
     }
+  }, [code, selectedLanguage, ws]);
 
+  const extensions = useMemo(() => {
     switch (selectedLanguage) {
       case "python3":
-        console.debug("got extension for Python");
         return [python()];
       case "javascript22":
-        console.debug("got extension for JavaScript");
         return [javascript()];
       default:
-        console.debug("unknown language:", selectedLanguage);
         return [];
     }
   }, [selectedLanguage]);
@@ -64,12 +71,8 @@ export default function CodeEditorTab({ roomId }) {
   const handleTextChange = useCallback(
     (value) => {
       setCode(value);
-      let message = { code: value, language: selectedLanguage };
-      if (ws) {
-        ws.send(JSON.stringify(message));
-      }
     },
-    [ws, selectedLanguage],
+    []
   );
 
   const runCode = async () => {
@@ -85,6 +88,7 @@ export default function CodeEditorTab({ roomId }) {
         className="code-input"
         height="100%"
         value={code}
+        theme={theme === "dark" ? oneDark : githubLight} 
         extensions={extensions}
         onChange={handleTextChange}
       />
