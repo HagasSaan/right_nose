@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { javascript } from "@codemirror/lang-javascript";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { githubLight } from "@uiw/codemirror-theme-github";
 
 import "./CodeEditorTab.scss";
 import { BASE_URL } from "../../Constants";
@@ -10,14 +12,13 @@ import { selectLanguage } from "../../slices/LanguageSelectorSlice";
 
 export default function CodeEditorTab({ roomId }) {
   const selectedLanguage = useSelector((state) => state.languageSelector.value);
+  const selectedTheme = useSelector((state) => state.themeSelector.value);
   const dispatch = useDispatch();
   const [ws, setWs] = useState(null);
   const [code, setCode] = useState("");
 
   useEffect(() => {
     const websocketUrl = `ws://${BASE_URL}/ws/${roomId}/input`;
-    console.debug("Connecting to socket", websocketUrl);
-
     const websocket = new WebSocket(websocketUrl);
     websocket.onopen = () => {
       console.debug("Connected to websocket", websocketUrl);
@@ -34,20 +35,16 @@ export default function CodeEditorTab({ roomId }) {
     };
 
     setWs(websocket);
-    return () => {
-      websocket.close();
-    };
+    return () => websocket.close();
   }, [roomId, dispatch]);
 
-  const extensions = useMemo(() => {
-    let message = {
-      code: code,
-      language: selectedLanguage,
-    };
-    if (ws) {
-      ws.send(JSON.stringify(message));
+  useEffect(() => {
+    if (ws && code !== "") {
+      ws.send(JSON.stringify({ code, language: selectedLanguage }));
     }
+  }, [code, selectedLanguage, ws]);
 
+  const extensions = useMemo(() => {
     switch (selectedLanguage) {
       case "python3":
         console.debug("got extension for Python");
@@ -61,16 +58,9 @@ export default function CodeEditorTab({ roomId }) {
     }
   }, [selectedLanguage]);
 
-  const handleTextChange = useCallback(
-    (value) => {
-      setCode(value);
-      let message = { code: value, language: selectedLanguage };
-      if (ws) {
-        ws.send(JSON.stringify(message));
-      }
-    },
-    [ws, selectedLanguage],
-  );
+  const handleTextChange = useCallback((value) => {
+    setCode(value);
+  }, []);
 
   const runCode = async () => {
     console.log("running code");
@@ -85,6 +75,7 @@ export default function CodeEditorTab({ roomId }) {
         className="code-input"
         height="100%"
         value={code}
+        theme={selectedTheme === "dark" ? oneDark : githubLight}
         extensions={extensions}
         onChange={handleTextChange}
       />

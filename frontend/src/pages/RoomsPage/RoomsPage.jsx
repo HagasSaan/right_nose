@@ -1,23 +1,22 @@
 import "./RoomsPage.scss";
 
 import { useState, useEffect } from "react";
-import { Navigate, NavLink, Outlet } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { collection, getDocs } from "firebase/firestore";
 
-import { BASE_URL, db } from "../../Constants";
+import { db } from "../../Constants";
 
 export default function RoomsPage() {
   const credential = useSelector((state) => state.auth.credential);
   const [rooms, setRooms] = useState([]);
+  const navigate = useNavigate();
 
   const roomsCollection = collection(db, "rooms");
 
   useEffect(() => {
     async function fetchData() {
-      if (!credential) {
-        return;
-      }
+      if (!credential) return;
       const roomsSnapshot = await getDocs(roomsCollection);
       setRooms(roomsSnapshot.docs.map((doc) => doc.data()));
     }
@@ -30,15 +29,24 @@ export default function RoomsPage() {
   }
 
   return (
-    <>
-      <nav className="rooms-nav">
+    <div className="rooms-wrapper">
+      <div className="rooms-container">
         {rooms.map((room) => (
-          <NavLink key={room.id} to={`${room.id}`}>
-            Room {room.name}
-          </NavLink>
+          <div
+            key={room.id}
+            className="room-card"
+            onClick={() => navigate(`${room.id}`)}
+          >
+            {room.name}
+          </div>
         ))}
-        <NavLink to="create">Create Room</NavLink>
-      </nav>
-    </>
+        <div
+          className="room-card create-room"
+          onClick={() => navigate("create")}
+        >
+          ➕ Create Room
+        </div>
+      </div>
+    </div>
   );
 }
