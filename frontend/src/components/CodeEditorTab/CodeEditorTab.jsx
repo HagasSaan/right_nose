@@ -17,21 +17,19 @@ export default function CodeEditorTab({ roomId }) {
   const [ws, setWs] = useState(null);
   const [code, setCode] = useState("");
 
-  // WebSocket
   useEffect(() => {
     const websocketUrl = `ws://${BASE_URL}/ws/${roomId}/input`;
     const websocket = new WebSocket(websocketUrl);
-
     websocket.onopen = () => {
-      console.debug("Connected to WebSocket", websocketUrl);
+      console.debug("Connected to websocket", websocketUrl);
     };
 
     websocket.onclose = () => {
-      console.debug("Disconnected from WebSocket", websocketUrl);
+      console.debug("Closed connection with websocket", websocketUrl);
     };
 
     websocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
+      let message = JSON.parse(event.data);
       setCode(message.code);
       dispatch(selectLanguage(message.language));
     };
