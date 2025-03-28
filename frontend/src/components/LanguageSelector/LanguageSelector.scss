@@ -2,20 +2,19 @@
     display: flex;
     justify-content: center;
     margin: 1rem;
-  
+
     select {
-      padding: 0.6rem 1rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: all 0.3s ease;
-  
-      &:focus {
-        outline: none;
-        border-color: var(--accent-color);
-      }
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: all 0.3s ease;
+
+        &:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
     }
-  }
-  
+}
