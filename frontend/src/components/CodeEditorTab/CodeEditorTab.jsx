@@ -12,35 +12,24 @@ import { selectLanguage } from "../../slices/LanguageSelectorSlice";
 
 export default function CodeEditorTab({ roomId }) {
   const selectedLanguage = useSelector((state) => state.languageSelector.value);
+  const selectedTheme = useSelector((state) => state.themeSelector.value);
   const dispatch = useDispatch();
   const [ws, setWs] = useState(null);
   const [code, setCode] = useState("");
-
-  const [theme, setTheme] = useState(() =>
-    document.documentElement.getAttribute("data-theme") || "light"
-  );
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const newTheme = document.documentElement.getAttribute("data-theme");
-      setTheme(newTheme || "light");
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   // WebSocket
   useEffect(() => {
     const websocketUrl = `ws://${BASE_URL}/ws/${roomId}/input`;
     const websocket = new WebSocket(websocketUrl);
 
-    websocket.onopen = () => console.debug("Connected to WebSocket", websocketUrl);
-    websocket.onclose = () => console.debug("Disconnected from WebSocket", websocketUrl);
+    websocket.onopen = () => {
+      console.debug("Connected to WebSocket", websocketUrl);
+    };
+
+    websocket.onclose = () => {
+      console.debug("Disconnected from WebSocket", websocketUrl);
+    };
+
     websocket.onmessage = (event) => {
       const message = JSON.parse(event.data);
       setCode(message.code);
@@ -60,20 +49,20 @@ export default function CodeEditorTab({ roomId }) {
   const extensions = useMemo(() => {
     switch (selectedLanguage) {
       case "python3":
+        console.debug("got extension for Python");
         return [python()];
       case "javascript22":
+        console.debug("got extension for JavaScript");
         return [javascript()];
       default:
+        console.debug("unknown language:", selectedLanguage);
         return [];
     }
   }, [selectedLanguage]);
 
-  const handleTextChange = useCallback(
-    (value) => {
-      setCode(value);
-    },
-    []
-  );
+  const handleTextChange = useCallback((value) => {
+    setCode(value);
+  }, []);
 
   const runCode = async () => {
     console.log("running code");
@@ -88,7 +77,7 @@ export default function CodeEditorTab({ roomId }) {
         className="code-input"
         height="100%"
         value={code}
-        theme={theme === "dark" ? oneDark : githubLight} 
+        theme={selectedTheme === "dark" ? oneDark : githubLight}
         extensions={extensions}
         onChange={handleTextChange}
       />

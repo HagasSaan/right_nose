@@ -28,14 +28,6 @@ export default function RoomsPage() {
     return <Navigate to="../auth" />;
   }
 
-  function goToRoom(roomId) {
-    navigate(`${roomId}`);
-  }
-
-  function goToCreateRoom() {
-    navigate("create");
-  }
-
   return (
     <div className="rooms-wrapper">
       <div className="rooms-container">
@@ -43,12 +35,15 @@ export default function RoomsPage() {
           <div
             key={room.id}
             className="room-card"
-            onClick={() => goToRoom(room.id)}
+            onClick={() => navigate(`${room.id}`)}
           >
             {room.name}
           </div>
         ))}
-        <div className="room-card create-room" onClick={goToCreateRoom}>
+        <div
+          className="room-card create-room"
+          onClick={() => navigate("create")}
+        >
           ➕ Create Room
         </div>
       </div>

@@ -6,14 +6,6 @@
     --accent-color: #007bff;
 }
 
-[data-theme="dark"] {
-    --bg-color: #121212;
-    --text-color: #ffffff;
-    --card-bg: #1e1e1e;
-    --border-color: #444;
-    --accent-color: #66aaff;
-}
-
 body {
     margin: 0;
     padding: 0;
@@ -23,6 +15,20 @@ body {
     transition:
         background-color 0.3s ease,
         color 0.3s ease;
+}
+
+.layout {
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.layout.dark-theme {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+    --card-bg: #1e1e1e;
+    --border-color: #444;
+    --accent-color: #66aaff;
 }
 
 .layout-header {
