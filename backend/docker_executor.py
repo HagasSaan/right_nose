@@ -2,6 +2,7 @@ import dataclasses
 import tempfile
 import docker
 import pathlib
+import os
 
 @dataclasses.dataclass(frozen=True)
 class DockerExecutor:
@@ -21,6 +22,7 @@ class DockerExecutor:
     BASE_DIR = pathlib.Path(__file__).parent
     CODE_DIR = BASE_DIR / 'code'
     async def execute(self, code: str) -> str:
+        os.makedirs(self.CODE_DIR, exist_ok=True)
         client = docker.from_env()
         settings = self.LANGUAGE_TO_SETTINGS_MAP[self.language]
 
